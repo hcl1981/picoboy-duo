@@ -2,17 +2,24 @@
 
 Firmware für den **alten PicoBoy** (RP2040, 128×64-OLED, schwarz-weiß), gebaut
 mit dem Pico SDK. Sie vereint die Einzelspieler-Sammlung **PicoPac**
-(unverändert in Aussehen und Spiel) mit zehn Zweispieler-Spielen für zwei
+(gleiches Aussehen, gleiches Spiel) mit zehn Zweispieler-Spielen für zwei
 PicoBoys, die über ein USB-C-Kabel verbunden sind (Umsetzung der
 [i2collection](https://github.com/hcl1981/pbc-plus/tree/main/i2collection) des
 PicoBoy Color Plus, dazu Jump 'n Bump als **POPBIT**).
 
+Die fertige Firmware steht unter
+[Releases](https://github.com/hcl1981/picoboy-duo/releases/latest). Selbst bauen:
+
 ```bash
-./build.sh          # -> dist/pbduo.uf2 (fertige Datei auch als ./pbduo.uf2)
+./build.sh          # -> dist/pbduo.uf2
 ```
 
 Flashen: Beim Einstecken BOOTSEL halten, dann `pbduo.uf2` auf das Laufwerk
 `RPI-RP2` kopieren. **Beide Geräte bekommen dieselbe Firmware.**
+
+Der USB-Anschluss gehört dem Spiele-Link, der PC sieht das Gerät deshalb nicht
+als serielle Schnittstelle. Auch zurück zu PicoPac, MicroPython oder Arduino geht
+es nur über BOOTSEL.
 
 ![Übersicht](screenshots/overview.png)
 
@@ -24,14 +31,17 @@ Links/Rechts blättert, Mitte wählt:
 1. PICTRIS  2. SCLANGE  3. TABMAN  4. W'n'R  5. Memor – wie in PicoPac
 6. **MULTI** – die Zweispieler-Spiele
 7. Demo
-8. **Settings** – Links/Rechts wählt, Mitte ändert, BACK speichert:
+8. HWTest – wie in PicoPac: drei Pieptöne, alle LEDs, dann ein Würfel, der dem
+   Beschleunigungssensor folgt, und ein Punkt je gedrückter Joystick-Richtung.
+   Der Ton läuft auch bei „Sound off“. Beenden durch Ausschalten.
+9. **Settings** – Links/Rechts wählt, Mitte ändert, BACK speichert:
    * **Sound** an/aus
    * **Display**: Helligkeit in 5 Stufen (Standard = Stufe 3 wie PicoPac;
      heller kostet Knopfzellenstrom), auch mit Hoch/Runter
    * **Scores**: alle Highscores löschen, nach Rückfrage (NO vorausgewählt)
    * **Info**: Lizenzhinweise, Hoch/Runter blättert
 
-Conway und HWTest sind entfallen. Die Einzelspieler-Spiele laufen wie im
+Conway ist entfallen. Die Einzelspieler-Spiele laufen wie im
 Original bis zum Ausschalten; die Highscores liegen an derselben Flash-Stelle
 wie bei der Originalfirmware und bleiben beim Umflashen erhalten.
 Langes Halten der Mitte-Taste hat nirgends eine Sonderfunktion.
@@ -127,7 +137,7 @@ Treiber-Patches und die Neu-Enumeration.
 `tools/sim` baut die echten Spiel- und Grafikquellen für den PC. Host und Gast
 laufen als zwei Prozesse, verbunden über einen Socket statt des Kabels;
 Tasten kommen aus einem Zufallsskript, das Display ist ein nachgebildeter
-SH1106. Beide Bildschirme werden als PGM gespeichert. Mit AddressSanitizer.
+SH1106, der Beschleunigungssensor ebenfalls (`PBSIM_NOSENSOR=1`: kein Sensor). Beide Bildschirme werden als PGM gespeichert. Mit AddressSanitizer.
 
 ```bash
 tools/sim/build.sh
@@ -146,17 +156,34 @@ Elektrik und das Timing des Kabel-Links.
 
 ## Stand
 
-Gebaut und im Simulator geprüft. **Auf echter Hardware noch nicht getestet**,
-insbesondere der D+/D−-Link auf dem RP2040 bei 50 MHz (die
-Originalsoftware des PicoBoy läuft mit 50 MHz; das schont die Knopfzelle).
+Die Spiele sind im Simulator und auf echten PicoBoys getestet. Die
+Originalsoftware des PicoBoy läuft mit 50 MHz; das schont die Knopfzelle, und
+auch der D+/D−-Link läuft mit diesem Takt.
+
+HWTest ist nachträglich wieder dazugekommen. Im Simulator läuft es mit und ohne
+Sensor; die Sensoranbindung (`src/picopac/Wire.h`) ist auf einem echten PicoBoy
+mit einem Testprogramm geprüft, der vollständige HWTest noch nicht.
 
 
 ## Lizenz
 
-Die eigenen Teile von PicoBoy Duo stehen unter MIT (`LICENSE`), die
-5×7-Schrift stammt aus der Adafruit-GFX-Library (BSD, `LICENSE-Adafruit-GFX.txt`),
-U8g2 steht unter BSD-2 (`third_party/u8g2/LICENSE`). Weil POPBIT (Jump 'n Bump)
-unter der **GPL v2+** steht (`jumpnbump/LICENSE`), ist die fertige Firmware als
-Ganzes unter der GPL weiterzugeben. Die PicoPac-Quellen stammen aus
-[hcl1981/picoboy](https://github.com/hcl1981/picoboy); das Repository enthält
-keine Lizenzdatei.
+**GNU General Public License, Version 2 oder (nach Wahl) jede spätere Version**
+(`LICENSE`). Weil POPBIT (Jump 'n Bump, © 1998 Brainchild Design) unter der
+GPL v2+ steht (`jumpnbump/LICENSE`), gilt das für die Firmware als Ganzes;
+Weitergabe von `pbduo.uf2` setzt also voraus, dass auch der Quelltext dabei oder
+zugänglich ist. Die eigenen Teile und die PicoPac-Quellen stehen unter derselben
+Lizenz.
+
+Enthaltene Fremdteile behalten ihre Lizenz:
+
+| Teil | Lizenz | Datei |
+|---|---|---|
+| U8g2 | BSD-2 (Schriften je Schrift, siehe dort) | `third_party/u8g2/LICENSE` |
+| 5×7-Schrift aus Adafruit GFX | BSD | `LICENSE-Adafruit-GFX.txt` |
+| Pico SDK (wird nur gelinkt, nicht mitgeliefert) | BSD-3 | `LICENSE-pico-sdk.txt` |
+
+## Nachbauen
+
+Gebaut mit Pico SDK 2.2.0 (`a1438dff`) und arm-none-eabi-gcc 14.2.1
+(Build Release). Mit diesen Versionen entsteht dieselbe `pbduo.uf2`; sie
+unterscheidet sich nur im eingebauten Baudatum.

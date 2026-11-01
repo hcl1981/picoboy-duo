@@ -37,6 +37,7 @@ static uint8_t ram[8][132];
 void gpio_init(uint) {}
 void gpio_set_dir(uint, int) {}
 void gpio_set_function(uint, int) {}
+void gpio_pull_up(uint) {}
 void gpio_put(uint pin, int v) { if (pin == 8) dc = v; }
 void sleep_ms(uint32_t ms) { usleep(ms * 1000); }
 void busy_wait_us_32(uint32_t us) { usleep(us); }
@@ -48,6 +49,29 @@ void flash_range_erase(uint32_t off, size_t n) { memset(sim_flash + off, 0xFF, n
 void flash_range_program(uint32_t off, const uint8_t* d, size_t n) { memcpy(sim_flash + off, d, n); }
 uint spi_init(spi_inst_t*, uint b) { return b; }
 void spi_set_format(spi_inst_t*, uint, int, int, int) {}
+
+// Nachgebildeter Beschleunigungssensor STK8BA58 (Adresse 0x18): die Schwerkraft
+// kreist langsam, damit sich der Wuerfel im HWTest dreht. Ohne Sensor
+// (PBSIM_NOSENSOR=1) meldet er sich nicht, wie ein defektes Geraet.
+#include <math.h>
+#include "hardware/i2c.h"
+static int sensorReg;
+static bool sensorFound(uint8_t addr) { return addr == 0x18 && !getenv("PBSIM_NOSENSOR"); }
+int i2c_write_timeout_us(i2c_inst_t*, uint8_t addr, const uint8_t* d, size_t n, bool, uint) {
+    if (!sensorFound(addr)) return PICO_ERROR_GENERIC;
+    if (n) sensorReg = d[0];
+    return (int)n;
+}
+int i2c_read_timeout_us(i2c_inst_t*, uint8_t addr, uint8_t* d, size_t n, bool, uint) {
+    if (!sensorFound(addr)) return PICO_ERROR_GENERIC;
+    double t = time_us_64() / 1e6;
+    double g[3] = { 0.7 * sin(t), 0.7 * cos(t * 0.7), -0.7 };
+    int axis = (sensorReg - 2) / 2;
+    int raw = (int)(g[axis >= 0 && axis < 3 ? axis : 0] * 1024);   // 12 Bit, 1024 = 1 g
+    uint16_t v = (uint16_t)(raw * 16);
+    for (size_t i = 0; i < n; i++) d[i] = (uint8_t)(v >> (i ? 8 : 0));
+    return (int)n;
+}
 
 static void dump();
 

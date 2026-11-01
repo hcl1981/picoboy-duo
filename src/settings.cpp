@@ -48,6 +48,11 @@ const char* const INFO[] = {
     "as a whole:",
     "GNU GPL v2+",
     "",
+    "Source code:",
+    "github.com/",
+    "hcl1981/",
+    "picoboy-duo",
+    "",
     "Popbit is",
     "Jump'n'Bump",
     "(C) 1998",
@@ -65,10 +70,14 @@ const char* const INFO[] = {
     "Industries,",
     "BSD",
     "",
+    "Pico SDK by",
+    "Raspberry Pi",
+    "BSD 3-Clause",
+    "",
     "PicoPac and",
     "Duo games:",
     "hcl1981",
-    "(Duo: MIT)",
+    "GPL v2+",
 };
 constexpr int INFO_LINES = sizeof INFO / sizeof INFO[0];
 constexpr int INFO_TOP = 22, INFO_STEP = 8, INFO_ROWS = (128 - INFO_TOP) / INFO_STEP;

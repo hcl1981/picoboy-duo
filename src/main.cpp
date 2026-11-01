@@ -1,7 +1,7 @@
 // PicoBoy Duo - die Spielesammlung fuer den (alten) PicoBoy.
 //
 // Startmenue und Einzelspieler-Spiele sind die der PicoPac-Sammlung
-// (PICTRIS, SCLANGE, TABMAN, W'n'R, Memor, Demo). Eintrag MULTI fuehrt zu den
+// (PICTRIS, SCLANGE, TABMAN, W'n'R, Memor, Demo, HWTest). Eintrag MULTI fuehrt zu den
 // Zweispieler-Spielen ueber ein USB-C-Kabel (multi.cpp).
 
 #include "pico/stdlib.h"

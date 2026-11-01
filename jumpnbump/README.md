@@ -61,7 +61,7 @@ Firmware steckt, ist `pbduo.uf2` als Ganzes unter der GPL weiterzugeben.
 
 ## Stand
 
-Im Simulator geprüft, auf den Geräten noch nicht getestet.
+Im Simulator und auf echten PicoBoys getestet.
 
 Jump 'n Bump (C) 1998 Brainchild Design, GPL2+; Portierungen: Chuck Mason,
 Florian Schulze, Côme Chilliet u. a.

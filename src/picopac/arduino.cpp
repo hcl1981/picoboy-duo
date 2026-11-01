@@ -5,8 +5,10 @@
 
 #include "Arduino.h"
 #include "U8g2lib.h"
+#include "Wire.h"
 
 #include "hardware/flash.h"
+#include "hardware/i2c.h"
 #include "hardware/spi.h"
 #include "hardware/sync.h"
 #include "pico/stdlib.h"
@@ -73,6 +75,43 @@ bool EEPROMClass::commit() {
     restore_interrupts(irq);
     return true;
 }
+
+// ---- Wire an I2C0 --------------------------------------------------------------
+// Standardwerte wie beim Arduino-Core (100 kHz, interne Pullups). Die Zeitgrenze
+// verhindert, dass ein fehlender oder defekter Sensor den Hardwaretest aufhaengt:
+// read() liefert dann -1 wie im Original.
+TwoWire Wire;
+
+namespace {
+constexpr uint WIRE_TIMEOUT_US = 50000;
+}
+
+void TwoWire::begin() {
+    i2c_init(i2c0, 100000);
+    gpio_set_function(sda, GPIO_FUNC_I2C);
+    gpio_set_function(scl, GPIO_FUNC_I2C);
+    gpio_pull_up(sda);
+    gpio_pull_up(scl);
+}
+
+void TwoWire::beginTransmission(uint8_t a) { addr = a; txLen = 0; }
+
+void TwoWire::write(uint8_t v) { if (txLen < sizeof tx) tx[txLen++] = v; }
+
+uint8_t TwoWire::endTransmission() {
+    int n = i2c_write_timeout_us(i2c0, addr, tx, txLen, false, WIRE_TIMEOUT_US);
+    return n == (int)txLen ? 0 : 4;      // 4 = "anderer Fehler" wie im Arduino-Core
+}
+
+uint8_t TwoWire::requestFrom(uint8_t a, uint8_t n) {
+    if (n > sizeof rx) n = sizeof rx;
+    int got = i2c_read_timeout_us(i2c0, a, rx, n, false, WIRE_TIMEOUT_US);
+    rxLen = got > 0 ? (uint8_t)got : 0;
+    rxPos = 0;
+    return rxLen;
+}
+
+int TwoWire::read() { return rxPos < rxLen ? rx[rxPos++] : -1; }
 
 // ---- U8g2 an SPI0 -------------------------------------------------------------
 namespace {

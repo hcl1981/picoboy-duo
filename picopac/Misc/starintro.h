@@ -1,6 +1,6 @@
 // Startmenue der PicoPac-Sammlung (Original: Arduino/PicoPac/Misc/starintro.h).
 // Fuer PicoBoy Duo geaendert: Eintrag 6 ist MULTI (Zweispieler ueber USB),
-// 7 die Demo, 8 Settings; Conway und HWTest sind entfallen. Bietet ein zweiter PicoBoy
+// 7 die Demo, 8 HWTest, 9 Settings; Conway ist entfallen. Bietet ein zweiter PicoBoy
 // ueber USB ein Spiel an, kehrt das Menue mit picopac::JOIN zurueck. Sonst
 // unveraendert.
 class StarIntro {
@@ -178,6 +178,13 @@ class StarIntro {
 			{
 			u8g2.setCursor(32 - u8g2.getStrWidth("<        >") / 2, 123);
 			u8g2.println("<        >");
+			u8g2.setCursor(32 - u8g2.getStrWidth("HWTest") / 2, 123);
+			u8g2.println("HWTest");
+			}
+			else if (gameID == 9)
+			{
+			u8g2.setCursor(32 - u8g2.getStrWidth("<        >") / 2, 123);
+			u8g2.println("<        >");
 			u8g2.setCursor(32 - u8g2.getStrWidth("Settings") / 2, 123);
 			u8g2.println("Settings");
 			}
@@ -207,14 +214,14 @@ class StarIntro {
 			{
 			gameID = gameID - 1;
 			if (gameID == 0)
-			gameID = 8;             // PicoBoy Duo: 8 Eintraege
+			gameID = 9;             // PicoBoy Duo: 9 Eintraege
 			lastSelection = millis();
 			// break;
 			}
 			else if (digitalRead(KEY_UP) == LOW && millis() > lastSelection + 200)
 			{
 			gameID = gameID + 1;
-			if (gameID == 9)        // PicoBoy Duo: 8 Eintraege
+			if (gameID == 10)       // PicoBoy Duo: 9 Eintraege
 			gameID = 1;
 			lastSelection = millis();
 			// break;

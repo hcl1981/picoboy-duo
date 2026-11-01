@@ -64,6 +64,7 @@ set_source_files_properties(${U8G2}/picopac_fonts.c PROPERTIES COMPILE_OPTIONS "
 target_link_libraries(pbduo
     pico_stdlib
     hardware_flash
+    hardware_i2c
     hardware_spi
     hardware_pwm
     hardware_sync

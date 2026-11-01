@@ -1,8 +1,8 @@
 // Die Einzelspieler-Sammlung PicoPac (Original: picoboy/Arduino/PicoPac) im
 // Pico SDK. Entspricht PicoPac.ino: gleiche Einbindung der Spiele, gleiche
 // EEPROM-Pruefung beim Start, gleiche Displayeinstellungen. Entfallen sind
-// Conway und HWTest; Eintrag 6 des Startmenues fuehrt zu den Zweispieler-
-// Spielen (main.cpp).
+// Conway; Eintrag 6 des Startmenues fuehrt zu den Zweispieler-Spielen
+// (main.cpp).
 //
 // Die Spielobjekte sind statisch statt lokal in setup(): einige tragen grosse
 // Felder (W'n'R merkt sich 10000 Zuege) - der Stapel des Pico SDK ist klein.
@@ -39,6 +39,7 @@ int eepromReadInt(int adr) {
 #include "Demo/demo.h"
 #include "Memor/memor.h"
 #include "Sensy/sensy.h"
+#include "HWTest/hwtest.h"           // nach Demo: benutzt deren xAxis, yAxis, zAxis
 
 namespace picopac {
 
@@ -66,6 +67,9 @@ void run(int id) {
         case 4: { static Sensy g(u8g2); g.run(); break; }
         case 5: { static Memor g(u8g2); g.run(); break; }
         case 7: { static Demo g(u8g2); g.run(); break; }
+        // Der Lautsprechertest soll auch bei "Sound off" hoerbar sein. Gespeichert
+        // wird das nicht; HWTest laeuft wie im Original bis zum Ausschalten.
+        case 8: { hw::setSound(true); static HWTest g(u8g2); g.run(); break; }
     }
 }
 
