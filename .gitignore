@@ -1,0 +1,8 @@
+build/
+dist/
+*.uf2
+tools/sim/pbsim
+tools/sim/obj/
+jumpnbump/build/
+jumpnbump/pbjnbsim
+PICOBOY_SYSTEMPROMPT.md
