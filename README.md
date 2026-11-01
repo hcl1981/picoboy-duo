@@ -161,9 +161,9 @@ Die Spiele sind im Simulator und auf echten PicoBoys getestet. Die
 Originalsoftware des PicoBoy läuft mit 50 MHz; das schont die Knopfzelle, und
 auch der D+/D−-Link läuft mit diesem Takt.
 
-HWTest ist nachträglich wieder dazugekommen. Im Simulator läuft es mit und ohne
-Sensor; die Sensoranbindung (`src/picopac/Wire.h`) ist auf einem echten PicoBoy
-mit einem Testprogramm geprüft, der vollständige HWTest noch nicht.
+HWTest ist nachträglich wieder dazugekommen. Es läuft im Simulator und auf einem
+echten PicoBoy. Das Speichern der Highscores ist dort ebenfalls geprüft, auch
+über einen Neustart hinweg.
 
 
 ## Lizenz
