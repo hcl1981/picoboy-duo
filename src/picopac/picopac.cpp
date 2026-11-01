@@ -14,22 +14,19 @@
 
 U8G2_SH1106_128X64_NONAME_F_4W_HW_SPI u8g2(U8G2_R3, /* cs=*/10, /* dc=*/8, /* reset=*/9);
 
-// Aus Misc/helper.h (Matthias Busse 5.2014); die Takt-Funktionen von dort
-// braucht es nicht, das Pico SDK bringt set_sys_clock_khz() selbst mit.
+// Ersatz fuer Misc/helper.h; die Takt-Funktionen von dort braucht es nicht, das
+// Pico SDK bringt set_sys_clock_khz() selbst mit.
+
+// Legt einen 16-Bit-Wert in zwei Bytes ab, das niedrige zuerst
 void eepromWriteInt(int adr, int wert) {
-    byte low, high;
-    low = wert & 0xFF;
-    high = (wert >> 8) & 0xFF;
-    EEPROM.write(adr, low);
-    EEPROM.write(adr + 1, high);
+    for (int i = 0; i < 2; i++)
+        EEPROM.write(adr + i, (wert >> (8 * i)) & 0xFF);
     EEPROM.commit();
 }
 
+// Gegenstueck zu eepromWriteInt
 int eepromReadInt(int adr) {
-    byte low, high;
-    low = EEPROM.read(adr);
-    high = EEPROM.read(adr + 1);
-    return low + ((high << 8) & 0xFF00);
+    return EEPROM.read(adr) | (EEPROM.read(adr + 1) << 8);
 }
 
 #include "TABman/tabman.h"
