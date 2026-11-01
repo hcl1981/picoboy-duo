@@ -2,10 +2,11 @@
 
 Firmware für den **alten PicoBoy** (RP2040, 128×64-OLED, schwarz-weiß), gebaut
 mit dem Pico SDK. Sie vereint die Einzelspieler-Sammlung **PicoPac**
-(gleiches Aussehen, gleiches Spiel) mit zehn Zweispieler-Spielen für zwei
-PicoBoys, die über ein USB-C-Kabel verbunden sind (Umsetzung der
+(gleiches Aussehen, gleiches Spiel) mit neun neuen Spielen für zwei PicoBoys,
+die über ein USB-C-Kabel verbunden sind (Umsetzung der
 [i2collection](https://github.com/hcl1981/pbc-plus/tree/main/i2collection) des
-PicoBoy Color Plus, dazu Jump 'n Bump als **POPBIT**).
+PicoBoy Color Plus, dazu Jump 'n Bump als **POPBIT**). W'n'R aus PicoPac gibt es
+zusätzlich zu zweit.
 
 Die fertige Firmware steht unter
 [Releases](https://github.com/hcl1981/picoboy-duo/releases/latest). Selbst bauen:
